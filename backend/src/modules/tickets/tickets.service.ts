@@ -202,7 +202,7 @@ export class TicketsService {
     remark?: string,
   ) {
     const history = this.historyRepository.create({
-      ticketId,
+      ticket: { id: ticketId } as any,
       action,
       fromStatus,
       toStatus,
