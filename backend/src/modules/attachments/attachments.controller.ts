@@ -9,7 +9,6 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
 import { AttachmentsService } from './attachments.service';
-import { MemoryStorage } from 'multer';
 
 @ApiTags('附件')
 @Controller('upload')

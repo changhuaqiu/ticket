@@ -6,8 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Ticket } from '../../tickets/entities/ticket.entity';
-import { User } from '../../auth/entities/user.entity';
+import { User } from '../auth/entities/user.entity';
 
 @Entity('attachments')
 export class Attachment {
@@ -16,10 +15,6 @@ export class Attachment {
 
   @Column({ nullable: true })
   ticketId: string;
-
-  @ManyToOne(() => Ticket, (ticket) => ticket.attachments)
-  @JoinColumn({ name: 'ticketId' })
-  ticket: Ticket;
 
   @Column({ length: 255 })
   filename: string;
