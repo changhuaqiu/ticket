@@ -1,0 +1,33 @@
+{
+  "project_name": "工单管理系统",
+  "status": "ux_complete",
+  "target_date": "2026-03-07",
+  "created_at": "2026-02-25",
+  "owner": "邱昌华",
+  "project_folder": "projects/ticket-system-2026-02-25/",
+  "git_commit": "37f2fbd",
+  "scope": {
+    "users": "内部员工",
+    "scenario": "客服投诉",
+    "workflow": "新建 → 处理中 → 待确认 → 已关闭",
+    "features": ["SLA时效", "角色权限", "工单管理"]
+  },
+  "tech_stack": {
+    "frontend": "React + Ant Design Pro",
+    "backend": "Node.js + NestJS",
+    "database": "PostgreSQL"
+  },
+  "phases": [
+    { "name": "UX设计", "days": 1, "status": "complete", "completed_at": "2026-02-26" },
+    { "name": "数据库&API", "days": 2, "status": "pending" },
+    { "name": "前端开发", "days": 4, "status": "pending" },
+    { "name": "测试验收", "days": 2, "status": "pending" },
+    { "name": "部署上线", "days": 1, "status": "pending" }
+  ],
+  "agents": {
+    "ux-design": "agent:ux-design:main",
+    "fullstack-dev": "agent:fullstack-dev:main",
+    "qa-tester": "agent:qa-tester:main"
+  },
+  "dashboard_message_id": null
+}
