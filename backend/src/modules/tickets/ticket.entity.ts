@@ -1,7 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { User } from '../users/user.entity';
-import { Comment } from '../comments/comment.entity';
-import { Attachment } from '../attachments/attachment.entity';
+import { TicketComment } from '../comments/entities/comment.entity';
+import { Attachment } from '../attachments/entities/attachment.entity';
+import { TicketHistory } from './ticket-history.entity';
 
 export enum TicketCategory {
   COMPLAINT = 'complaint',
@@ -88,9 +89,12 @@ export class Ticket {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Comment, comment => comment.ticket)
-  comments: Comment[];
+  @OneToMany(() => TicketComment, comment => comment.ticket)
+  comments: TicketComment[];
 
   @OneToMany(() => Attachment, attachment => attachment.ticket)
   attachments: Attachment[];
+
+  @OneToMany(() => TicketHistory, history => history.ticket)
+  histories: TicketHistory[];
 }

@@ -202,12 +202,12 @@ export class TicketsService {
     remark?: string,
   ) {
     const history = this.historyRepository.create({
+      ticketId,
       action,
       fromStatus,
       toStatus,
       operatorId,
       remark,
-      ticket: { id: ticketId } as any,
     });
     await this.historyRepository.save(history);
   }

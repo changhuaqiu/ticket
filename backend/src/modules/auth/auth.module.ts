@@ -16,10 +16,10 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('jwt.secret')!,
         signOptions: {
-          expiresIn: configService.get<string>('jwt.expiresIn') || '7d',
+          expiresIn: configService.get<string>('jwt.expiresIn') || '7d' as any,
         },
       }),
       inject: [ConfigService],
