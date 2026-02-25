@@ -10,9 +10,10 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  @UseGuards(LocalAuthGuard)
   @ApiOperation({ summary: '用户登录' })
-  async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  async login(@Request() req: any) {
+    return this.authService.login({ username: req.user.username, password: req.user.password });
   }
 
   @Post('register')
@@ -24,7 +25,7 @@ export class AuthController {
   @Get('me')
   @ApiBearerAuth()
   @ApiOperation({ summary: '获取当前用户信息' })
-  async getCurrentUser(@Request() req) {
+  async getCurrentUser(@Request() req: any) {
     return this.authService.getCurrentUser(req.user.userId);
   }
 }

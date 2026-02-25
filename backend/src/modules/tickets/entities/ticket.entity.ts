@@ -10,7 +10,6 @@ import {
 } from 'typeorm';
 import { User } from '../../auth/entities/user.entity';
 import { TicketComment } from '../../comments/entities/comment.entity';
-import { Attachment } from '../../attachments/entities/attachment.entity';
 import { TicketHistory } from './ticket-history.entity';
 
 export enum TicketCategory {
@@ -100,9 +99,6 @@ export class Ticket {
 
   @OneToMany(() => TicketComment, (comment) => comment.ticket)
   comments: TicketComment[];
-
-  @OneToMany(() => Attachment, (attachment) => attachment.ticket)
-  attachments: Attachment[];
 
   @OneToMany(() => TicketHistory, (history) => history.ticket)
   histories: TicketHistory[];
