@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      padding: 40px;
+      min-width: 1200px;
+    }
+    .container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+      color: white;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 { font-size: 20px; font-weight: 600; }
+    .header-right { display: flex; gap: 16px; align-items: center; }
+    .nav {
+      background: #fafafa;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 12px 24px;
+      display: flex;
+      gap: 24px;
+    }
+    .nav-item { 
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #666;
+    }
+    .nav-item.active { background: #e6f7ff; color: #1890ff; }
+    .filters {
+      padding: 16px 24px;
+      display: flex;
+      gap: 16px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .filter-btn {
+      padding: 6px 12px;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      background: white;
+      font-size: 14px;
+    }
+    .search {
+      flex: 1;
+      padding: 6px 12px;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th { 
+      background: #fafafa;
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 500;
+      color: #666;
+      font-size: 14px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    td { 
+      padding: 16px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    .status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .status.new { background: #f6ffed; color: #52c41a; }
+    .status.processing { background: #fffbe6; color: #faad14; }
+    .status.confirming { background: #e6f7ff; color: #1890ff; }
+    .status.closed { background: #f5f5f5; color: #8c8c8c; }
+    .priority {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .priority.high { background: #fff1f0; color: #f5222d; border: 1px solid #ffa39e; }
+    .priority.medium { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
+    .priority.low { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+    .sla { color: #fa8c16; font-weight: 500; }
+    .pagination {
+      padding: 16px 24px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .page { 
+      padding: 4px 12px;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .page.active { background: #1890ff; color: white; border-color: #1890ff; }
+    .btn {
+      padding: 6px 16px;
+      background: #1890ff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📋 工单管理系统</h1>
+      <div class="header-right">
+        <span>👤 张三</span>
+        <span>🔔 3</span>
+        <span>⚙️</span>
+        <button class="btn">+ 新建工单</button>
+      </div>
+    </div>
+    <div class="nav">
+      <div class="nav-item">📊 仪表盘</div>
+      <div class="nav-item active">📋 工单列表</div>
+      <div class="nav-item">📁 归档</div>
+      <div class="nav-item">⚙️ 设置</div>
+    </div>
+    <div class="filters">
+      <select class="filter-btn"><option>状态: 全部</option></select>
+      <select class="filter-btn"><option>优先级: 全部</option></select>
+      <input class="search" placeholder="搜索工单...">
+    </div>
+    <table>
+      <tr>
+        <th>状态</th>
+        <th>编号</th>
+        <th>标题</th>
+        <th>优先级</th>
+        <th>SLA</th>
+        <th>负责人</th>
+      </tr>
+      <tr>
+        <td><span class="status new">🟢 新建</span></td>
+        <td>TG-001</td>
+        <td>客服系统无法登录</td>
+        <td><span class="priority high">🔥 高</span></td>
+        <td class="sla">⏱️ 1h 23m</td>
+        <td>赵四</td>
+      </tr>
+      <tr>
+        <td><span class="status processing">🟡 处理中</span></td>
+        <td>TG-002</td>
+        <td>支付流程报错</td>
+        <td><span class="priority medium">🟡 中</span></td>
+        <td class="sla">⏱️ 5h 47m</td>
+        <td>钱五</td>
+      </tr>
+      <tr>
+        <td><span class="status confirming">🔵 待确认</span></td>
+        <td>TG-003</td>
+        <td>订单退款异常</td>
+        <td><span class="priority high">🔥 高</span></td>
+        <td class="sla">⏱️ 12h</td>
+        <td>孙六</td>
+      </tr>
+      <tr>
+        <td><span class="status closed">⚫ 已关闭</span></td>
+        <td>TG-004</td>
+        <td>权限设置问题</td>
+        <td><span class="priority low">🟢 低</span></td>
+        <td style="color: #8c8c8c;">已超时</td>
+        <td>周七</td>
+      </tr>
+    </table>
+    <div class="pagination">
+      <span class="page active">1</span>
+      <span class="page">2</span>
+      <span class="page">3</span>
+      <span style="padding: 4px 8px;">...</span>
+      <span class="page">12</span>
+    </div>
+  </div>
+</body>
+</html>
