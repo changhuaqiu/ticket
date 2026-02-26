@@ -24,18 +24,10 @@ export class TicketHistory {
   @Column({ length: 50 })
   action: string;
 
-  @Column({
-    type: 'enum',
-    enum: TicketStatus,
-    nullable: true,
-  })
+  @Column({ type: 'simple-enum', enum: TicketStatus, nullable: true })
   fromStatus: TicketStatus;
 
-  @Column({
-    type: 'enum',
-    enum: TicketStatus,
-    nullable: true,
-  })
+  @Column({ type: 'simple-enum', enum: TicketStatus, nullable: true })
   toStatus: TicketStatus;
 
   @Column()

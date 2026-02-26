@@ -11,13 +11,3 @@ export default registerAs('database', () => ({
   synchronize: process.env.DB_SYNCHRONIZE !== 'false',
   logging: process.env.DB_LOGGING === 'true',
 }));
-
-export const appConfig = registerAs('app', () => ({
-  port: parseInt(process.env.PORT || '3000'),
-  env: process.env.NODE_ENV || 'development',
-}));
-
-export const jwtConfig = registerAs('jwt', () => ({
-  secret: process.env.JWT_SECRET || 'default-secret-key',
-  expiresIn: process.env.JWT_EXPIRES_IN || '7d',
-}));

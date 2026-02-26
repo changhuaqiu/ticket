@@ -8,7 +8,9 @@ import { CommentsModule } from './modules/comments/comments.module';
 import { AttachmentsModule } from './modules/attachments/attachments.module';
 import { StatisticsModule } from './modules/statistics/statistics.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
-import { appConfig, databaseConfig, jwtConfig } from './config/configuration';
+import appConfig from './config/app.config';
+import databaseConfig from './config/database.config';
+import jwtConfig from './config/jwt.config';
 
 @Module({
   imports: [
@@ -18,17 +20,32 @@ import { appConfig, databaseConfig, jwtConfig } from './config/configuration';
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('database.host'),
-        port: configService.get<number>('database.port'),
-        username: configService.get<string>('database.username'),
-        password: configService.get<string>('database.password'),
-        database: configService.get<string>('database.database'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: configService.get<boolean>('database.synchronize'),
-        logging: configService.get<boolean>('database.logging'),
-      }),
+      useFactory: (configService: ConfigService) => {
+        const dbType = configService.get<string>('database.type');
+        const config: any = {
+          type: dbType,
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
+          synchronize: configService.get<boolean>('database.synchronize'),
+          logging: configService.get<boolean>('database.logging'),
+        };
+
+        if (dbType === 'postgres') {
+          // PostgreSQL 配置
+          config.host = configService.get<string>('database.host');
+          config.port = configService.get<number>('database.port');
+          config.username = configService.get<string>('database.username');
+          config.password = configService.get<string>('database.password');
+          config.database = configService.get<string>('database.database');
+        } else {
+          // SQLite 配置
+          config.database = configService.get<string>('database.database');
+          config.extra = {
+            // SQLite 特定配置
+          };
+        }
+
+        return config;
+      },
       inject: [ConfigService],
     }),
     AuthModule,
