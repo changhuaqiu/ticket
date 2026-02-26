@@ -47,25 +47,13 @@ export class Ticket {
   @Column({ type: 'text' })
   description: string;
 
-  @Column({
-    type: 'enum',
-    enum: TicketCategory,
-    default: TicketCategory.OTHER,
-  })
+  @Column({ type: 'simple-enum', enum: TicketCategory, default: TicketCategory.OTHER })
   category: TicketCategory;
 
-  @Column({
-    type: 'enum',
-    enum: TicketPriority,
-    default: TicketPriority.MEDIUM,
-  })
+  @Column({ type: 'simple-enum', enum: TicketPriority, default: TicketPriority.MEDIUM })
   priority: TicketPriority;
 
-  @Column({
-    type: 'enum',
-    enum: TicketStatus,
-    default: TicketStatus.NEW,
-  })
+  @Column({ type: 'simple-enum', enum: TicketStatus, default: TicketStatus.NEW })
   status: TicketStatus;
 
   @Column()
@@ -82,13 +70,13 @@ export class Ticket {
   @JoinColumn({ name: 'handlerId' })
   handler: User;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   slaDueAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   resolvedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   closedAt: Date;
 
   @CreateDateColumn()
