@@ -4,9 +4,9 @@
   "description": "工单管理系统后端 API",
   "main": "src/main.ts",
   "scripts": {
-    "dev": "nest start --watch",
-    "build": "nest build",
-    "start": "node dist/main",
+    "dev": "tsc --watch & node dist/main.js",
+    "build": "tsc --build",
+    "start": "node dist/main.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",

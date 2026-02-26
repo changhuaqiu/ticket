@@ -26,8 +26,8 @@ export class User {
   email: string;
 
   @Column({
-    type: 'enum',
-    enum: UserRole,
+    type: 'varchar',
+    length: 50,
     default: UserRole.SUBMITTER,
   })
   role: UserRole;

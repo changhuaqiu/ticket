@@ -7,6 +7,7 @@ import { TicketsModule } from './modules/tickets/tickets.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { AttachmentsModule } from './modules/attachments/attachments.module';
 import { StatisticsModule } from './modules/statistics/statistics.module';
+import { HealthModule } from './modules/health/health.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
@@ -53,6 +54,7 @@ import jwtConfig from './config/jwt.config';
     CommentsModule,
     AttachmentsModule,
     StatisticsModule,
+    HealthModule,
   ],
   providers: [
     {

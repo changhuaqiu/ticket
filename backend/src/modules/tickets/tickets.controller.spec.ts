@@ -1,13 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TicketsController } from './tickets.controller';
 import { TicketsService } from './tickets.service';
-import { CreateTicketDto, UpdateTicketStatusDto, AssignTicketDto, QueryTicketDto } from './dto/ticket.dto';
+import { CreateTicketDto, QueryTicketDto, UpdateTicketStatusDto, AssignTicketDto } from './dto/ticket.dto';
 import { TicketStatus, TicketCategory, TicketPriority } from './entities/ticket.entity';
-import { UserRole } from '../auth/entities/user.entity';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Reflector } from '@nestjs/core';
 
 describe('TicketsController', () => {
   let controller: TicketsController;
   let service: TicketsService;
+
+  const mockTicketsService = {
+    create: jest.fn(),
+    findAll: jest.fn(),
+    findOne: jest.fn(),
+    updateStatus: jest.fn(),
+    assign: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -15,16 +24,16 @@ describe('TicketsController', () => {
       providers: [
         {
           provide: TicketsService,
-          useValue: {
-            create: jest.fn(),
-            findAll: jest.fn(),
-            findOne: jest.fn(),
-            updateStatus: jest.fn(),
-            assign: jest.fn(),
-          },
+          useValue: mockTicketsService,
         },
+        Reflector,
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({
+        canActivate: jest.fn().mockReturnValue(true),
+      })
+      .compile();
 
     controller = module.get<TicketsController>(TicketsController);
     service = module.get<TicketsService>(TicketsService);
@@ -34,297 +43,147 @@ describe('TicketsController', () => {
     it('should create a ticket', async () => {
       const createTicketDto: CreateTicketDto = {
         title: '测试工单',
-        description: '测试工单描述',
+        description: '这是一个测试工单',
         category: TicketCategory.COMPLAINT,
-        priority: TicketPriority.HIGH,
+        priority: TicketPriority.URGENT,
       };
 
-      const result = {
+      const mockResult = {
         code: 0,
-        message: '成功',
         data: {
-          id: '1',
-          ticketNo: 'TG-001',
-          title: '测试工单',
-          description: '测试工单描述',
-          category: TicketCategory.COMPLAINT,
-          priority: TicketPriority.HIGH,
+          id: '123',
+          ...createTicketDto,
           status: TicketStatus.NEW,
-          submitterId: 'user123',
-          submitter: {
-            id: 'user123',
-            username: 'testuser',
-            password: 'password',
-            name: '测试用户',
-            email: 'test@example.com',
-            role: UserRole.SUBMITTER,
-            department: '技术部',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            submittedTickets: [],
-            handledTickets: [],
-            comments: [],
-          },
-          handlerId: 'handler456', // 避免 null 值
-          handler: {
-            id: 'handler456',
-            username: 'handler456',
-            password: 'password',
-            name: '处理人',
-            email: 'handler456@example.com',
-            role: UserRole.HANDLER,
-            department: '技术部',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            submittedTickets: [],
-            handledTickets: [],
-            comments: [],
-          },
-          slaDueAt: new Date(Date.now() + 3600000),
-          resolvedAt: new Date(Date.now() + 3600000), // 避免 null 值
-          closedAt: new Date(Date.now() + 3600000), // 避免 null 值
-          attachments: [],
+          ticketNo: 'TK20260226001',
           createdAt: new Date(),
-          updatedAt: new Date(),
-          comments: [],
-          histories: [],
         },
       };
 
-      jest.spyOn(service, 'create').mockResolvedValue(result);
+      mockTicketsService.create.mockResolvedValue(mockResult);
 
-      const req = { user: { userId: 'user123' } };
-      expect(await controller.create(createTicketDto, req)).toEqual(result);
+      const result = await controller.create(createTicketDto, { user: { userId: 'user1' } });
+
+      expect(service.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ...createTicketDto,
+        }),
+        'user1',
+      );
+      expect(result).toEqual(mockResult);
     });
   });
 
-  describe('查询工单列表', () => {
-    it('should return ticket list with pagination', async () => {
-      const query: QueryTicketDto = {
-        page: 1,
-        pageSize: 10,
-      };
-
-      const result = {
-        code: 0,
-        message: '成功',
-        data: {
-          list: [
-            {
-              id: '1',
-              ticketNo: 'TG-001',
-              title: '工单1',
-              status: TicketStatus.NEW,
-              priority: TicketPriority.HIGH,
-              slaDueAt: new Date(Date.now() + 3600000),
-              submitter: {
-                id: 'user123',
-                username: 'testuser',
-                password: 'password',
-                name: '测试用户',
-                email: 'test@example.com',
-                role: UserRole.SUBMITTER,
-                department: '技术部',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                submittedTickets: [],
-                handledTickets: [],
-                comments: [],
-              },
-              handler: {
-                id: 'handler456',
-                username: 'handler456',
-                password: 'password',
-                name: '处理人',
-                email: 'handler456@example.com',
-                role: UserRole.HANDLER,
-                department: '技术部',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                submittedTickets: [],
-                handledTickets: [],
-                comments: [],
-              },
-              createdAt: new Date(),
-            },
-            {
-              id: '2',
-              ticketNo: 'TG-002',
-              title: '工单2',
-              status: TicketStatus.PROCESSING,
-              priority: TicketPriority.MEDIUM,
-              slaDueAt: new Date(Date.now() + 7200000),
-              submitter: {
-                id: 'user456',
-                username: 'user456',
-                password: 'password',
-                name: '另一个用户',
-                email: 'user456@example.com',
-                role: UserRole.SUBMITTER,
-                department: '产品部',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                submittedTickets: [],
-                handledTickets: [],
-                comments: [],
-              },
-              handler: {
-                id: 'handler789',
-                username: 'handler789',
-                password: 'password',
-                name: '处理人',
-                email: 'handler789@example.com',
-                role: UserRole.HANDLER,
-                department: '技术部',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                submittedTickets: [],
-                handledTickets: [],
-                comments: [],
-              },
-              createdAt: new Date(),
-            },
-          ],
-          total: 2,
-          page: 1,
-          pageSize: 10,
+  describe('获取工单列表', () => {
+    it('should return a list of tickets', async () => {
+      const mockTickets = [
+        {
+          id: '1',
+          ticketNo: 'TK20260226001',
+          title: '测试工单1',
+          status: TicketStatus.NEW,
+          category: TicketCategory.INQUIRY,
+          priority: TicketPriority.MEDIUM,
+          createdAt: new Date(),
         },
+        {
+          id: '2',
+          ticketNo: 'TK20260226002',
+          title: '测试工单2',
+          status: TicketStatus.PROCESSING,
+          category: TicketCategory.SUGGESTION,
+          priority: TicketPriority.URGENT,
+          createdAt: new Date(),
+        },
+      ];
+
+      mockTicketsService.findAll.mockResolvedValue({
+        code: 0,
+        data: mockTickets,
+      });
+
+      const query: QueryTicketDto = {};
+      const result = await controller.findAll(query);
+
+      expect(service.findAll).toHaveBeenCalledWith(query);
+      expect(result).toEqual({
+        code: 0,
+        data: mockTickets,
+      });
+    });
+  });
+
+  describe('获取单张工单', () => {
+    it('should return a single ticket', async () => {
+      const mockTicket = {
+        id: '1',
+        ticketNo: 'TK20260226001',
+        title: '测试工单',
+        description: '这是一个测试工单',
+        status: TicketStatus.NEW,
+        category: TicketCategory.COMPLAINT,
+        priority: TicketPriority.URGENT,
+        submitterId: 'user1',
+        handlerId: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
-      jest.spyOn(service, 'findAll').mockResolvedValue(result);
+      mockTicketsService.findOne.mockResolvedValue({
+        code: 0,
+        data: mockTicket,
+      });
 
-      expect(await controller.findAll(query)).toEqual(result);
+      const result = await controller.findOne('1');
+
+      expect(service.findOne).toHaveBeenCalledWith('1');
+      expect(result).toEqual({
+        code: 0,
+        data: mockTicket,
+      });
     });
   });
 
   describe('更新工单状态', () => {
-    it('should update ticket status to processing', async () => {
-      const updateStatusDto: UpdateTicketStatusDto = {
-        status: TicketStatus.PROCESSING,
-        remark: '开始处理',
-      };
-
-      const result = {
+    it('should update ticket status', async () => {
+      const newStatus: TicketStatus = TicketStatus.PROCESSING;
+      const mockResult = {
         code: 0,
-        message: '成功',
         data: {
-          id: '1',
-          ticketNo: 'TG-001',
+          id: '123',
+          ticketNo: 'TK20260226001',
           title: '测试工单',
-          description: '测试工单描述',
-          category: TicketCategory.COMPLAINT,
-          priority: TicketPriority.HIGH,
-          status: TicketStatus.PROCESSING,
-          submitterId: 'user123',
-          submitter: {
-            id: 'user123',
-            username: 'testuser',
-            password: 'password',
-            name: '测试用户',
-            email: 'test@example.com',
-            role: UserRole.SUBMITTER,
-            department: '技术部',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            submittedTickets: [],
-            handledTickets: [],
-            comments: [],
-          },
-          handlerId: 'handler456',
-          handler: {
-            id: 'handler456',
-            username: 'handler456',
-            password: 'password',
-            name: '处理人',
-            email: 'handler456@example.com',
-            role: UserRole.HANDLER,
-            department: '技术部',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            submittedTickets: [],
-            handledTickets: [],
-            comments: [],
-          },
-          slaDueAt: new Date(Date.now() + 3600000),
-          resolvedAt: new Date(Date.now() + 3600000),
-          closedAt: new Date(Date.now() + 3600000),
-          attachments: [],
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          comments: [],
-          histories: [],
+          status: newStatus,
         },
       };
 
-      jest.spyOn(service, 'updateStatus').mockResolvedValue(result);
+      mockTicketsService.updateStatus.mockResolvedValue(mockResult);
 
-      const req = { user: { userId: 'user123' } };
-      expect(await controller.updateStatus('1', updateStatusDto, req)).toEqual(result);
+      const result = await controller.updateStatus('123', { status: newStatus }, { user: { userId: 'user1' } });
+
+      expect(service.updateStatus).toHaveBeenCalledWith('123', { status: newStatus }, 'user1');
+      expect(result).toEqual(mockResult);
     });
   });
 
-  describe('分配工单', () => {
-    it('should assign ticket to handler', async () => {
-      const assignDto: AssignTicketDto = {
-        handlerId: 'handler456',
-      };
-
-      const result = {
+  describe('分配处理人', () => {
+    it('should assign a handler to a ticket', async () => {
+      const handlerId = 'user2';
+      const mockResult = {
         code: 0,
-        message: '成功',
         data: {
-          id: '1',
-          ticketNo: 'TG-001',
+          id: '123',
+          ticketNo: 'TK20260226001',
           title: '测试工单',
-          description: '测试工单描述',
-          category: TicketCategory.COMPLAINT,
-          priority: TicketPriority.HIGH,
-          status: TicketStatus.PROCESSING,
-          submitterId: 'user123',
-          submitter: {
-            id: 'user123',
-            username: 'testuser',
-            password: 'password',
-            name: '测试用户',
-            email: 'test@example.com',
-            role: UserRole.SUBMITTER,
-            department: '技术部',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            submittedTickets: [],
-            handledTickets: [],
-            comments: [],
-          },
-          handlerId: 'handler456',
-          handler: {
-            id: 'handler456',
-            username: 'handler456',
-            password: 'password',
-            name: '处理人',
-            email: 'handler456@example.com',
-            role: UserRole.HANDLER,
-            department: '技术部',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            submittedTickets: [],
-            handledTickets: [],
-            comments: [],
-          },
-          slaDueAt: new Date(Date.now() + 3600000),
-          resolvedAt: new Date(Date.now() + 3600000),
-          closedAt: new Date(Date.now() + 3600000),
-          attachments: [],
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          comments: [],
-          histories: [],
+          handlerId: handlerId,
         },
       };
 
-      jest.spyOn(service, 'assign').mockResolvedValue(result);
+      mockTicketsService.assign.mockResolvedValue(mockResult);
 
-      const req = { user: { userId: 'user123' } };
-      expect(await controller.assign('1', assignDto, req)).toEqual(result);
+      const result = await controller.assign('123', { handlerId }, { user: { userId: 'user1' } });
+
+      expect(service.assign).toHaveBeenCalledWith('123', { handlerId }, 'user1');
+      expect(result).toEqual(mockResult);
     });
   });
 });

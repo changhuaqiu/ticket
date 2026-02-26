@@ -18,7 +18,6 @@ import {
 // SLA 配置（小时）
 const SLA_CONFIG: Record<TicketPriority, number> = {
   [TicketPriority.URGENT]: 2,
-  [TicketPriority.HIGH]: 4,
   [TicketPriority.MEDIUM]: 8,
   [TicketPriority.LOW]: 24,
 };

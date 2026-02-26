@@ -19,11 +19,17 @@
     "lint": "npm run lint --workspaces"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "concurrently": "^8.2.0"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "author": "邱昌华",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "sqlite3": "^5.1.7",
+    "uuid": "^13.0.0"
+  }
 }

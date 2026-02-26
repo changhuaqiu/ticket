@@ -1,7 +1,7 @@
 import {
   Entity,
-  Column,
   PrimaryGeneratedColumn,
+  Column,
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
@@ -21,7 +21,6 @@ export enum TicketCategory {
 
 export enum TicketPriority {
   URGENT = 'urgent',
-  HIGH = 'high',
   MEDIUM = 'medium',
   LOW = 'low',
 }
@@ -38,35 +37,35 @@ export class Ticket {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 20, unique: true })
+  @Column({ unique: true })
   ticketNo: string;
 
-  @Column({ length: 200 })
+  @Column()
   title: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column({ type: 'simple-enum', enum: TicketCategory, default: TicketCategory.OTHER })
+  @Column({ type: 'varchar', length: 50, default: TicketCategory.OTHER })
   category: TicketCategory;
 
-  @Column({ type: 'simple-enum', enum: TicketPriority, default: TicketPriority.MEDIUM })
+  @Column({ type: 'varchar', length: 50, default: TicketPriority.MEDIUM })
   priority: TicketPriority;
 
-  @Column({ type: 'simple-enum', enum: TicketStatus, default: TicketStatus.NEW })
+  @Column({ type: 'varchar', length: 50, default: TicketStatus.NEW })
   status: TicketStatus;
 
   @Column()
   submitterId: string;
 
-  @ManyToOne(() => User, (user) => user.submittedTickets)
+  @ManyToOne(() => User, user => user.submittedTickets)
   @JoinColumn({ name: 'submitterId' })
   submitter: User;
 
   @Column({ nullable: true })
   handlerId: string;
 
-  @ManyToOne(() => User, (user) => user.handledTickets, { nullable: true })
+  @ManyToOne(() => User, user => user.handledTickets, { nullable: true })
   @JoinColumn({ name: 'handlerId' })
   handler: User;
 
@@ -85,9 +84,9 @@ export class Ticket {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => TicketComment, (comment) => comment.ticket)
+  @OneToMany(() => TicketComment, comment => comment.ticket)
   comments: TicketComment[];
 
-  @OneToMany(() => TicketHistory, (history) => history.ticket)
+  @OneToMany(() => TicketHistory, history => history.ticket)
   histories: TicketHistory[];
 }

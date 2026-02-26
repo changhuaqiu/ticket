@@ -39,22 +39,22 @@ export class Ticket {
   description: string;
 
   @Column({
-    type: 'enum',
-    enum: TicketCategory,
+    type: 'varchar',
+    length: 50,
     default: TicketCategory.OTHER,
   })
   category: TicketCategory;
 
   @Column({
-    type: 'enum',
-    enum: TicketPriority,
+    type: 'varchar',
+    length: 50,
     default: TicketPriority.MEDIUM,
   })
   priority: TicketPriority;
 
   @Column({
-    type: 'enum',
-    enum: TicketStatus,
+    type: 'varchar',
+    length: 50,
     default: TicketStatus.NEW,
   })
   status: TicketStatus;
@@ -73,13 +73,13 @@ export class Ticket {
   @JoinColumn({ name: 'handlerId' })
   handler: User;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   slaDueAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   resolvedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'datetime', nullable: true })
   closedAt: Date;
 
   @CreateDateColumn()

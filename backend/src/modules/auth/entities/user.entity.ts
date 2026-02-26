@@ -33,7 +33,7 @@ export class User {
   @Column({ length: 100, nullable: true })
   email: string;
 
-  @Column({ type: 'simple-enum', enum: UserRole, default: UserRole.SUBMITTER })
+  @Column({ type: 'varchar', length: 50, default: UserRole.SUBMITTER })
   role: UserRole;
 
   @Column({ length: 100, nullable: true })
